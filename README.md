@@ -19,15 +19,26 @@
 ## 📦 Project Structure
 ```plaintext
 ├── src/
-│   ├── assets/           # Images, styles, and static resources
-│   ├── components/       # Reusable Vue components
-│   ├── views/            # Main application pages
-│   ├── App.vue           # Root component
-│   ├── main.ts           # Application entry point
-├── public/               # Public files (index.html, icons)
-├── vite.config.ts        # Vite configuration
-├── package.json          # Project dependencies and scripts
-├── README.md             # Project documentation
+│   ├── components/       # Componentes reutilizáveis do Vue
+│   │   ├── CampaignCard.vue
+│   │   ├── CampaignSection.vue
+│   │   ├── DashboardHeader.vue
+│   │   ├── GaugeChart.vue
+│   │   └── SummarySection.vue
+│   ├── styles/           # Estilos globais
+│   │   └── global.scss
+│   ├── utils/            # Funções utilitárias
+│   │   └── interaction.ts
+│   ├── views/            # Visões principais do aplicativo
+│   │   └── DashboardView.vue
+│   ├── App.vue           # Componente raiz
+│   └── main.ts           # Ponto de entrada do aplicativo
+├── .gitignore            # Arquivos ignorados pelo Git
+├── index.html            # Arquivo HTML principal
+├── package.json          # Dependências e scripts do projeto
+├── README.md             # Documentação do projeto
+├── tsconfig.json         # Configuração do TypeScript
+└── vite.config.ts        # Configuração do Vite
 ```
 
 ## 🛠️ How to Run the Project
@@ -110,16 +121,29 @@ Contact:
 
 ## 📦 Estrutura do Projeto
 ```plaintext
+## 📦 Project Structure
+```plaintext
 ├── src/
-│   ├── assets/           # Imagens, estilos e recursos estáticos
-│   ├── components/       # Componentes Vue reutilizáveis
-│   ├── views/            # Páginas principais do aplicativo
-│   ├── App.vue           # Componente raiz
-│   ├── main.ts           # Ponto de entrada do aplicativo
-├── public/               # Arquivos públicos (index.html, ícones)
-├── vite.config.ts        # Configuração do Vite
-├── package.json          # Dependências e scripts do projeto
-├── README.md             # Documentação do projeto
+│   ├── components/       # Reusable Vue components
+│   │   ├── CampaignCard.vue
+│   │   ├── CampaignSection.vue
+│   │   ├── DashboardHeader.vue
+│   │   ├── GaugeChart.vue
+│   │   └── SummarySection.vue
+│   ├── styles/           # Global styles
+│   │   └── global.scss
+│   ├── utils/            # Utility functions
+│   │   └── interaction.ts
+│   ├── views/            # Main application views
+│   │   └── DashboardView.vue
+│   ├── App.vue           # Root component
+│   └── main.ts           # Application entry point
+├── .gitignore            # Git ignored files
+├── index.html            # Main HTML file
+├── package.json          # Project dependencies and scripts
+├── README.md             # Project documentation
+├── tsconfig.json         # TypeScript configuration
+└── vite.config.ts        # Vite configuration
 ```
 
 ## 🛠️ Como Rodar o Projeto
