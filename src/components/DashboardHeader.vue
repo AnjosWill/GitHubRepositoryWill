@@ -1,17 +1,27 @@
 <template>
-  <header class="dashboard-header">
-    <h1 class="title">
-      Campaign <span>Dashboard</span>
+  <header class="dashboard-header" role="banner">
+    <h1 class="title" :aria-label="title">
+      {{ title }} <span>{{ highlight }}</span>
     </h1>
   </header>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: "DashboardHeader",
-});
+  name: 'DashboardHeader',
+  props: {
+    title: {
+      type: String,
+      default: 'Campaign',
+    },
+    highlight: {
+      type: String,
+      default: 'Dashboard',
+    },
+  },
+})
 </script>
 
 <style scoped>

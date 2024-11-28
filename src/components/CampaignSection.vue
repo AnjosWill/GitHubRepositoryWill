@@ -1,9 +1,9 @@
 <template>
-  <div class="campaign-section" :data-total-items="totalItems">
+  <section class="campaign-section">
     <div class="section-header" :class="{ expanded: expanded }" @click="toggleSection">
       <h2 class="section-title">
         <svg v-if="icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path :d="icon" fill="#7c3aed"/>
+          <path :d="icon" fill="#7c3aed" />
         </svg>
         {{ title }}
       </h2>
@@ -18,9 +18,15 @@
       </svg>
     </div>
     <div class="campaign-cards" :class="{ collapsed: !expanded }">
-      <slot />
+      <CampaignCard
+        v-for="campaign in campaigns"
+        :key="campaign.id"
+        :campaign="campaign"
+        @primary-action="$emit('primary-action', campaign.id)"
+        @secondary-action="$emit('secondary-action', campaign.id)"
+      />
     </div>
-    <button class="show-more" v-if="totalItems > 1" @click.stop="toggleSection">
+    <button class="show-more" v-if="campaigns.length > 1" @click.stop="toggleSection">
       {{ expanded ? 'See less' : 'See all' }}
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
         <path
@@ -32,27 +38,20 @@
         />
       </svg>
     </button>
-  </div>
+  </section>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
+import CampaignCard from '@/components/CampaignCard.vue'
 
 export default defineComponent({
   name: 'CampaignSection',
+  components: { CampaignCard },
   props: {
-    title: {
-      type: String,
-      required: true,
-    },
-    totalItems: {
-      type: Number,
-      required: true,
-    },
-    icon: {
-      type: String,
-      required: false,
-    },
+    title: { type: String, required: true },
+    campaigns: { type: Array, required: true },
+    icon: { type: String, required: false },
   },
   setup() {
     const expanded = ref(true)
@@ -70,8 +69,14 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.campaign-section {
-  margin-bottom: 1rem;
+.campaign-section h2 {
+  color: #333;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 1rem 0 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .section-header {
@@ -93,8 +98,9 @@ export default defineComponent({
 .campaign-cards {
   max-height: none;
   overflow: visible;
+  transition: max-height 0.3s ease;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(680px, 1fr));
   gap: 1rem;
 }
 

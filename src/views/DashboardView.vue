@@ -1,112 +1,153 @@
 <template>
+  <Dialog ref="dialog" />
   <div class="container">
     <DashboardHeader />
-    <SummarySection
-      :progress="22"
-      :financialData="[
-        { label: 'Total Balance', value: '$4,100' },
-        { label: 'Balance', value: '$900' },
-        { label: 'Pending Payments', value: '$3,200' }
-      ]"
-      :activeCampaigns="4"
-      cashOutAvailable="$1,200"
-    />
-    <CampaignSection title="Eligible for Advance" :totalItems="2"
-    icon="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z">
-      <CampaignCard
-        logo="/images/autumn-bliss.PNG"
-        altText="Autumn Bliss logo"
-        title="Fall Launch"
-        subtitle="Autumn Bliss"
-        amount="$500"
-        badgeText="Earned"
-        badgeClass="status-earned"
-        buttonText="Get Payment Early"
-        buttonClass="action-button-early"
-        paymentDate="December 9, 2024"
-        @button-click="handleAction('getPaymentEarly')"
+    <SummaryCards :availableBalance="totalAvailableForCashOut" @cash-out="handleCashOut" />
+
+    <!-- Filter Section -->
+    <FilterSection />
+
+    <div v-if="isFiltered" class="filtered-campaigns">
+      <CampaignSection
+        title="Filtered Campaigns"
+        :campaigns="filteredCampaigns"
+        @primary-action="handleAction('getPaymentEarly', $event)"
+        @secondary-action="handleAction('getViewDetails', $event)"
       />
-      <CampaignCard
-        logo="/images/lume-atelier.PNG"
-        altText="Lume Atelier logo"
-        title="Summer Collection 2024"
-        subtitle="Lume Atelier Co."
-        amount="$750"
-        badgeText="Earned"
-        badgeClass="status-earned"
-        buttonText="Get Payment Early"
-        buttonClass="action-button-early"
-        paymentDate="July 30, 2023"
-        @button-click="handleAction('getPaymentEarly')"
+    </div>
+    <div v-else-if="!isFiltered" class="section-campaigns">
+      <CampaignSection
+        v-if="eligibleCampaigns.length"
+        title="Eligible for Advance"
+        icon="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"
+        :campaigns="eligibleCampaigns"
+        @primary-action="handleAction('getPaymentEarly', $event)"
+        @secondary-action="handleAction('getViewDetails', $event)"
       />
-    </CampaignSection>
-    <CampaignSection title="Pending Payments" :totalItems="2"
-    icon="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z">
-      <CampaignCard
-        logo="/images/festiva.PNG"
-        altText="Festiva logo"
-        title="Holiday Campaign"
-        subtitle="Festiva"
-        amount="$1,200"
-        badgeText="Available for Cash-out"
-        badgeClass="status-available"
-        buttonText="Cash Out Now"
-        buttonClass="action-button-cashout"
-        @button-click="handleAction('getCashOutNow')"
+      <CampaignSection
+        v-if="pendingCampaigns.length"
+        title="Pending Payments"
+        icon="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"
+        :campaigns="pendingCampaigns"
+        @secondary-action="handleAction('getViewDetails', $event)"
       />
-      <CampaignCard
-        logo="/images/summer-glow.PNG"
-        altText="SummerGlow logo"
-        title="Summer Series"
-        subtitle="Summer Glow Co."
-        amount="$750"
-        badgeText="Awaiting Payment"
-        badgeClass="status-awaiting"
-        paymentDate="November 25, 2024"
-        buttonText="View Details"
-        buttonClass="action-button-view"
-        @button-click="handleAction('getViewDetails')"
+      <CampaignSection
+        v-if="completedCampaigns.length"
+        title="Completed"
+        icon="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"
+        :campaigns="completedCampaigns"
+        @secondary-action="handleAction('getViewDetails', $event)"
       />
-    </CampaignSection>
-    <CampaignSection title="Completed" :totalItems="1"
-    icon="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z">
-      <CampaignCard
-        logo="/images/ever-trend.PNG"
-        altText="EverTrend logo"
-        title="Completed Series"
-        subtitle="EverTrend Co."
-        amount="$900"
-        badgeText="Completed"
-        badgeClass="status-completed"
-        paymentDate="November 13, 2024"
-        buttonText="View Details"
-        buttonClass="action-button-view"
-        @button-click="handleAction('getViewDetails')"
-      />
-    </CampaignSection>
+    </div>
+    <div v-else class="no-campaigns">No campaigns available.</div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { ref, defineComponent } from 'vue'
+import { mapState, mapGetters, mapActions } from 'vuex'
+import { CAMPAIGN_STATUSES } from '@/config/constants'
 import DashboardHeader from '@/components/DashboardHeader.vue'
-import SummarySection from '@/components/SummarySection.vue'
+import SummaryCards from '@/components/SummaryCards.vue'
+import FilterSection from '@/components/FilterSection.vue'
 import CampaignSection from '@/components/CampaignSection.vue'
-import CampaignCard from '@/components/CampaignCard.vue'
-import { handleButtonClick } from '@/utils/interaction'
+import Dialog from '@/components/Dialog.vue'
 
 export default defineComponent({
   name: 'DashboardView',
   components: {
     DashboardHeader,
-    SummarySection,
+    SummaryCards,
+    FilterSection,
     CampaignSection,
-    CampaignCard,
-
+    Dialog,
+  },
+  setup() {
+    const dialog = ref(null)
+    return {
+      dialog,
+    }
+  },
+  computed: {
+    ...mapState(['availableBalance', 'filters']),
+    ...mapGetters([
+      'filteredCampaigns',
+      'eligibleCampaigns',
+      'pendingCampaigns',
+      'completedCampaigns',
+      'totalAvailableForCashOut',
+    ]),
+    isFiltered() {
+      const hasFilters = this.filters.statuses.length > 0 && !this.filters.statuses.includes('All')
+      if (this.filters.searchQuery || hasFilters) {
+        return this.filteredCampaigns
+      }
+      return null
+    },
   },
   methods: {
-    handleAction(action: string) {
-      handleButtonClick(action)
+    ...mapActions(['updateCampaign', 'cashOut']),
+    handleAction(action, campaignId) {
+      const campaign = this.$store.state.campaigns.find((c) => c.id === campaignId)
+
+      if (!campaign) return
+
+      if (action === 'getPaymentEarly') {
+        const feePercentage = 5 // Exemplo de taxa de 5%
+        const fee = (campaign.amount * feePercentage) / 100
+        const total = campaign.amount + fee
+
+        this.$refs.dialog.open({
+          title: 'Early Payment Request',
+          content: [
+            { label: 'Original amount:', value: `$${campaign.amount}`, isBold: true },
+            { label: `Early payment fee (${feePercentage}%):`, value: `$${fee.toFixed(2)}` },
+            {
+              label: 'Total amount:',
+              value: `$${total.toFixed(2)}`,
+              isTotal: true,
+            },
+          ],
+          message: 'Would you like to proceed with the early payment request?',
+          confirmText: 'Confirm',
+          cancelText: 'Cancel',
+          onConfirm: () => {
+            this.$store.commit('updateCampaignStatus', {
+              id: campaignId,
+              status: CAMPAIGN_STATUSES.AVAILABLE_SOON,
+              total,
+            })
+            setTimeout(() => {
+              this.$store.commit('updateCampaignStatus', {
+                id: campaignId,
+                status: CAMPAIGN_STATUSES.AVAILABLE_FOR_CASHOUT,
+              })
+              this.$store.commit('addToAvailableBalance', total)
+            }, 10000)
+          },
+        })
+      }
+    },
+    handleCashOut() {
+      const total = this.$store.getters.totalAvailableForCashOut
+      if (total > 0) {
+        this.$refs.dialog.open({
+          title: 'Confirm Cash Out',
+          content: [
+            {
+              label: 'Amount to cash out:',
+              value: `$${total}`,
+              isTotal: true,
+            },
+          ],
+          message: `Would you like to proceed with the cash out?`,
+          confirmText: 'Confirm',
+          cancelText: 'Cancel',
+          onConfirm: this.cashOut,
+        })
+      } else {
+        console.warn('No balance available to cash out.')
+      }
     },
   },
 })
@@ -125,21 +166,45 @@ export default defineComponent({
   animation: fadeIn 0.5s ease-in-out;
 }
 
-.summary-cards {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
-
-.card {
-  background: rgba(255, 255, 255, 0.5);
+.dialog {
+  background: white;
   padding: 2rem;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
 }
-
-.campaign-section {
-  margin-bottom: 1rem;
+.dialog-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+.dialog-button-confirm {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.dialog-button-cancel {
+  background: transparent;
+  border: 1px solid #6b7280;
+  color: #6b7280;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
 }
 </style>
