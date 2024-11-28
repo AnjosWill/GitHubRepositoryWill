@@ -1,20 +1,12 @@
 # Will CashOut - Vue Project
 
 ## 📝 Description [Eng]
-**Will CashOut** is an application developed in Vue.js to manage financial campaigns and payments. It includes a responsive interface, dynamic charts, and a simplified user experience.
+**Will CashOut** is an application developed in Vue.js to manage financial campaigns and payments. It includes a responsive interface, dynamic lists, and a simplified user experience.
 
-## 🌟 Features
-- View active, pending, and completed campaigns.
-- Financial progress indicators.
-- Responsive interface for different screen sizes.
-- Optimized interface using Vue.js and Vite.
-
-## 🚀 Technologies Used
-- **Frontend**: [Vue.js 3](https://vuejs.org/)
-- **Package Manager**: [NPM](https://www.npmjs.com/)
-- **Build Tool**: [Vite](https://vitejs.dev/)
-- **Linter**: [ESLint](https://eslint.org/)
-- **TypeScript**: Full support for static typing.
+## 🚀 Updated Features
+- **Status Progression:** Campaign statuses are dynamically updated, and this progression is reflected in real-time on the campaign cards.
+- **Dynamic Value Updates:** When a campaign is moved to "Available to Cash-out," the total cash-out value is automatically adjusted.
+- **Search Filters:** Enables filtering campaigns by text and status, with support for searching by both name and brand.
 
 ## 📦 Project Structure
 ```plaintext
@@ -23,10 +15,18 @@
 │   │   ├── CampaignCard.vue
 │   │   ├── CampaignSection.vue
 │   │   ├── DashboardHeader.vue
-│   │   ├── GaugeChart.vue
-│   │   └── SummarySection.vue
+│   │   ├── Dialog.vue
+│   │   ├── FilterSection.vue
+│   │   └── SummaryCards.vue
+│   ├── config/           # Configuration files
+│   │   └── constants.ts
+│   ├── store/            # Vuex store
+│   │   └── index.ts
 │   ├── styles/           # Global styles
 │   │   └── global.scss
+│   ├── types/            # TypeScript definitions
+│   │   ├── shims-images.d.ts
+│   │   └── store.d.ts
 │   ├── utils/            # Utility functions
 │   │   └── interaction.ts
 │   ├── views/            # Main application views
@@ -104,13 +104,12 @@ Contact:
 ---
 
 ## 📝 Descrição [Pt-Br]
-**Will CashOut** é um aplicativo desenvolvido em Vue.js para gerenciar campanhas financeiras e pagamentos. Ele inclui uma interface responsiva, gráficos dinâmicos e uma experiência de usuário simplificada.
+**Will CashOut** é um aplicativo desenvolvido em Vue.js para gerenciar campanhas financeiras e pagamentos. Ele inclui uma interface responsiva, listas dinâmicas e uma experiência de usuário simplificada.
 
-## 🌟 Funcionalidades
-- Visualização de campanhas ativas, pendentes e concluídas.
-- Indicadores de progresso financeiro.
-- Interface responsiva para diferentes tamanhos de tela.
-- Interface otimizada com Vue.js e Vite.
+## 🌟 Funcionalidades Atualizadas
+- **Progressão de Status**: O status das campanhas é atualizado dinamicamente, e essa progressão é refletida em tempo real nos cartões de campanha.
+- **Atualização de Valores Dinâmicos**: Quando uma campanha é movida para "Available to Cash-out", o valor total do saque é automaticamente ajustado.
+- **Filtros de Pesquisa**: Permite filtrar campanhas por texto e status, com suporte à pesquisa tanto pelo nome quanto pela marca.
 
 ## 🚀 Tecnologias Utilizadas
 - **Frontend**: [Vue.js 3](https://vuejs.org/)
@@ -122,30 +121,35 @@ Contact:
 ## 📦 Estrutura do Projeto
 ```plaintext
 ## 📦 Project Structure
-```plaintext
 ├── src/
 │   ├── components/       # Componentes reutilizáveis do Vue
 │   │   ├── CampaignCard.vue
 │   │   ├── CampaignSection.vue
 │   │   ├── DashboardHeader.vue
-│   │   ├── GaugeChart.vue
-│   │   └── SummarySection.vue
+│   │   ├── Dialog.vue
+│   │   ├── FilterSection.vue
+│   │   └── SummaryCards.vue
+│   ├── config/           # Configurações gerais
+│   │   └── constants.ts
+│   ├── store/            # Gerenciamento de Store
+│   │   └── index.ts
 │   ├── styles/           # Estilos globais
 │   │   └── global.scss
+│   ├── types/            # Definições de tipos TypeScript e de Store
+│   │   ├── shims-images.d.ts
+│   │   └── store.d.ts
 │   ├── utils/            # Funções utilitárias
 │   │   └── interaction.ts
-│   ├── views/            # Visões principais do aplicativo
+│   ├── views/            # Visão principal do aplicativo
 │   │   └── DashboardView.vue
 │   ├── App.vue           # Componente raiz
 │   └── main.ts           # Ponto de entrada do aplicativo
-├── .gitignore            # Arquivos ignorados pelo Git
 ├── index.html            # Arquivo HTML principal
 ├── package.json          # Dependências e scripts do projeto
 ├── README.md             # Documentação do projeto
 ├── tsconfig.json         # Configuração do TypeScript
 └── vite.config.ts        # Configuração do Vite
 ```
-
 ## 🛠️ Como Rodar o Projeto
 
 ### 1. Pré-requisitos
