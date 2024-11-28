@@ -93,9 +93,9 @@ export default defineComponent({
       if (!campaign) return
 
       if (action === 'getPaymentEarly') {
-        const feePercentage = 5 // Exemplo de taxa de 5%
+        const feePercentage = 5
         const fee = (campaign.amount * feePercentage) / 100
-        const total = campaign.amount + fee
+        const total = campaign.amount - fee
 
         this.$refs.dialog.open({
           title: 'Early Payment Request',
@@ -103,7 +103,7 @@ export default defineComponent({
             { label: 'Original amount:', value: `$${campaign.amount}`, isBold: true },
             { label: `Early payment fee (${feePercentage}%):`, value: `$${fee.toFixed(2)}` },
             {
-              label: 'Total amount:',
+              label: 'Amount after fee:',
               value: `$${total.toFixed(2)}`,
               isTotal: true,
             },
